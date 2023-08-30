@@ -2,7 +2,7 @@ from abc import ABCMeta
 from enum import Enum
 
 
-class UserService(object):
+class UserService:
 
     def __init__(self):
         self.users_by_id = {}  # key: user id, value: User
@@ -23,7 +23,7 @@ class UserService(object):
         pass
 
 
-class User(object):
+class User:
 
     def __init__(self, user_id, name, pass_hash):
         self.user_id = user_id
@@ -79,7 +79,7 @@ class GroupChat(Chat):
         pass
 
 
-class Message(object):
+class Message:
 
     def __init__(self, message_id, message, timestamp):
         self.message_id = message_id
@@ -87,7 +87,7 @@ class Message(object):
         self.timestamp = timestamp
 
 
-class AddRequest(object):
+class AddRequest:
 
     def __init__(self, from_user_id, to_user_id, request_status, timestamp):
         self.from_user_id = from_user_id
