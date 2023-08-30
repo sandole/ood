@@ -13,7 +13,7 @@ class File:
         self.children = []
         self.is_directory = False if '.' in name else True
         self.extension = name.split(".")[1] if '.' in name else ""
-
+    
     def __repr__(self):
         return "{"+self.name+"}"
 
@@ -47,7 +47,47 @@ class ExtensionFilter(Filter):
 
 # LinuxFindCommand
 
-class LinuxFind():
+class LinuxFind:
+    def __init__(self,filters: List[Filter]) -> None:
+        self.filters = filters
+    
+    def apply_filter(self, filter: Filter):
+        self.filters.append(filter)
+    
+    def apply_or_filter(self,object: File):
+        # Iterate through the list of self.filters and return true if any applies
+        found_files = []
+        queue = deque()
+        queue.append(object)
+        while queue:
+            curr_object = queue.popleft()
+            if curr_object.is_directory:
+                for child in curr_object.children:
+                    queue.append(child)
+            else:
+                for filter in self.filters:
+                    if filter.apply(object):
+                        found_files.append(object)
+        return found_files
+        
+    def apply_and_filter(self, object: File):
+        # Iterate through the list of self.filters and return true if all applies
+        found_files = []
+        queue = deque()
+        queue.append(object)
+        while queue:
+            curr_item = queue.popleft()
+            if curr_item.is_directory:
+                pass
+            else:
+                for filter in self.filters:
+                    if not filter.apply(object):
+                        return []
+                found_files.append(object)
+        return found_files
+                    
+
+class LinuxFind:
     def __init__(self):
         self.filters: List[Filter] = []
 
@@ -59,11 +99,9 @@ class LinuxFind():
     def apply_OR_filtering(self, root):
         found_files = []
 
-        # bfs
         queue = deque()
         queue.append(root)
         while queue:
-            # print(queue)
             curr_root = queue.popleft()
             if curr_root.is_directory:
                 for child in curr_root.children:
@@ -72,14 +110,12 @@ class LinuxFind():
                 for filter in self.filters:
                     if filter.apply(curr_root):
                         found_files.append(curr_root)
-                        print(curr_root)
                         break
         return found_files
 
     def apply_AND_filtering(self, root):
         found_files = []
 
-        # bfs
         queue = deque()
         queue.append(root)
         while queue:
@@ -95,7 +131,6 @@ class LinuxFind():
                         break
                 if is_valid:
                     found_files.append(curr_root)
-                    print(curr_root)
 
         return found_files
 
